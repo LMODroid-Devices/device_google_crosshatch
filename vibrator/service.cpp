@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#define LOG_TAG "android.hardware.vibrator@1.2-service.crosshatch"
 
-#include <android/hardware/vibrator/1.2/IVibrator.h>
-#include <hidl/HidlSupport.h>
-#include <hidl/HidlTransportSupport.h>
-#include <utils/Errors.h>
-#include <utils/StrongPointer.h>
+#define LOG_TAG "Vibrator"
+
+#include <android/binder_manager.h>
+#include <android/binder_process.h>
+#include <log/log.h>
+
+#include <map>
 
 #include "Vibrator.h"
 
-using android::hardware::configureRpcThreadpool;
-using android::hardware::joinRpcThreadpool;
-using android::hardware::vibrator::V1_2::IVibrator;
-using android::hardware::vibrator::V1_2::implementation::Vibrator;
+using aidl::android::hardware::vibrator::Vibrator;
 
 static constexpr char ACTIVATE_PATH[] = "/sys/class/leds/vibrator/activate";
 static constexpr char DURATION_PATH[] = "/sys/class/leds/vibrator/duration";
@@ -101,8 +99,7 @@ static bool loadCalibrationData() {
     return true;
 }
 
-// passing out ownership, can't make sp yet
-IVibrator *makeVibratorService() {
+int main() {
     // ostreams below are required
     std::ofstream activate{ACTIVATE_PATH};
     if (!activate) {
@@ -143,10 +140,15 @@ IVibrator *makeVibratorService() {
         ALOGW("Failed to load calibration data");
     }
 
-    return new Vibrator(std::move(activate), std::move(duration), std::move(effect),
-                        std::move(queue), std::move(scale));
-}
+    ABinderProcess_setThreadPoolMaxThreadCount(0);
+    std::shared_ptr<Vibrator> vib =
+        ndk::SharedRefBase::make<Vibrator>(std::move(activate), std::move(duration),
+                                           std::move(effect), std::move(queue), std::move(scale));
 
-extern "C" IVibrator *HIDL_FETCH_IVibrator(const char * /*instnace*/) {
-    return makeVibratorService();
+    const std::string instance = std::string() + Vibrator::descriptor + "/default";
+    binder_status_t status = AServiceManager_addService(vib->asBinder().get(), instance.c_str());
+    LOG_ALWAYS_FATAL_IF(status != STATUS_OK);
+
+    ABinderProcess_joinThreadPool();
+    return EXIT_FAILURE;  // should not reach
 }

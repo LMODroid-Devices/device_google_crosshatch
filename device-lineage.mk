@@ -7,6 +7,9 @@
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay-lmodroid
 
+# Add common definitions for Qualcomm
+$(call inherit-product, hardware/qcom-caf/common/common.mk)
+
 # AiAi Config
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/allowlist_com.google.android.as.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/allowlist_com.google.android.as.xml
@@ -68,6 +71,10 @@ PRODUCT_PACKAGES += \
     libcodec2_vndk.vendor \
     libstagefright_bufferpool@2.0.1.vendor
 
+# Configstore
+PRODUCT_PACKAGES += \
+    disable_configstore
+
 # Confirmation UI
 PRODUCT_PACKAGES += \
     android.hardware.confirmationui@1.0.vendor:64 \
@@ -124,7 +131,8 @@ PRODUCT_PACKAGES += \
     android.hardware.wifi-V2-ndk.vendor:64 \
     android.hardware.wifi@1.0.vendor:64 \
     libwifi-hal:64 \
-    libwifi-hal-qcom
+    libwifi-hal-qcom \
+    libwifi-system-iface.vendor:64
 
 # Misc interfaces
 PRODUCT_PACKAGES += \
@@ -157,6 +165,13 @@ PRODUCT_PACKAGES += \
     android.hardware.thermal@1.0.vendor:64 \
     android.hardware.weaver@1.0.vendor:64 \
     android.system.net.netd@1.1.vendor:64
+
+# Misc
+PRODUCT_PACKAGES += \
+    libcrypto_utils.vendor:64 \
+    libpng.vendor \
+    libsqlite.vendor \
+    libssl.vendor:32
 
 # Properties
 TARGET_VENDOR_PROP := $(LOCAL_PATH)/vendor.prop

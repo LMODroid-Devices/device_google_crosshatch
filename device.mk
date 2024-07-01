@@ -354,7 +354,8 @@ PRODUCT_PACKAGES += \
 
 # Health HAL
 PRODUCT_PACKAGES += \
-    android.hardware.health@2.0-service.crosshatch
+    android.hardware.health@2.1-impl-crosshatch \
+    android.hardware.health@2.1-service
 
 # Storage health HAL
 PRODUCT_PACKAGES += \
@@ -367,12 +368,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.hardware.lights=qcom
 
-# Memtrack/Vibrator HALs
+# Memtrack HAL
 PRODUCT_PACKAGES += \
     memtrack.sdm845 \
     android.hardware.memtrack@1.0-impl \
-    android.hardware.vibrator@1.2-impl.crosshatch \
-    small_hals.crosshatch-service
+    android.hardware.memtrack@1.0-service
 
 # Bluetooth SoC
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -393,8 +393,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # DRM HAL
 PRODUCT_PACKAGES += \
-    android.hardware.drm@1.0-impl \
-    android.hardware.drm@1.0-service \
     android.hardware.drm@1.3.vendor \
     android.hardware.drm-service.clearkey
 
@@ -496,9 +494,13 @@ endif
 
 # Boot control HAL
 PRODUCT_PACKAGES += \
-    android.hardware.boot@1.0-impl \
-    android.hardware.boot@1.0-impl.recovery \
-    android.hardware.boot@1.0-service \
+    android.hardware.boot@1.2-impl-pixel-legacy \
+    android.hardware.boot@1.2-impl-pixel-legacy.recovery \
+    android.hardware.boot@1.2-service \
+
+# Vibrator HAL
+PRODUCT_PACKAGES += \
+    android.hardware.vibrator-service.crosshatch
 
 #GNSS HAL
 PRODUCT_PACKAGES += \
@@ -859,7 +861,6 @@ endif
 # Pixel Logger
 include hardware/google/pixel/PixelLogger/PixelLogger.mk
 
-include hardware/google/pixel/pixelstats/device.mk
 include hardware/google/pixel/mm/device_legacy.mk
 include device/google/gs-common/thermal/thermal_hal/device.mk
 

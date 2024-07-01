@@ -17,11 +17,13 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
-cc_library_shared {
-    name: "android.hardware.vibrator@1.2-impl.crosshatch",
+cc_binary {
+    name: "android.hardware.vibrator-service.crosshatch",
     relative_install_path: "hw",
+    init_rc: ["android.hardware.vibrator-service.crosshatch.rc"],
+    vintf_fragments: ["android.hardware.vibrator-service.crosshatch.xml"],
     srcs: [
-        "impl.cpp",
+        "service.cpp",
         "Vibrator.cpp",
     ],
     cflags: [
@@ -29,12 +31,9 @@ cc_library_shared {
         "-Werror",
     ],
     shared_libs: [
-        "android.hardware.vibrator@1.0",
-        "android.hardware.vibrator@1.1",
-        "android.hardware.vibrator@1.2",
-        "libcutils",
+        "android.hardware.vibrator-V2-ndk",
+        "libbinder_ndk",
         "libhardware",
-        "libhidlbase",
         "liblog",
         "libutils",
     ],
